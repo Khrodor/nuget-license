@@ -105,17 +105,17 @@ namespace NugetUtility
             bool result = false;
             var licenses = new List<Dictionary<string, Package>>();
             var projects = Directory.GetFiles(projectPath, "*.*", SearchOption.AllDirectories).Where(i => i.EndsWith(GetProjectExtension()));
-            foreach (var item in projects)
+            foreach (var project in projects)
             {
-                var references = this.GetProjectReferences(item);
+                var references = this.GetProjectReferences(project);
                 if (uniqueList)
                 {
-                    licenses.Add(await this.GetNugetInformationAsync(item, references));
+                    licenses.Add(await this.GetNugetInformationAsync(project, references));
                 }
                 else
                 {
-                    licenses.Add(await this.GetNugetInformationAsync(item, references));
-                    PrintLicenses(licenses);
+                    licenses.Add(await this.GetNugetInformationAsync(project, references));
+                    PrintLicenses(licenses, project);
                 }
 
                 result = true;
@@ -129,18 +129,21 @@ namespace NugetUtility
             return result;
         }
 
-        public void PrintLicenses(List<Dictionary<string, Package>> licenses)
+        public void PrintLicenses(List<Dictionary<string, Package>> licenses, string project)
         {
             if (licenses.Any())
             {
                 Console.WriteLine(Environment.NewLine + "References:");
                 foreach (var license in licenses)
                 {
-                    Console.WriteLine(license.ToStringTable(new[] {"Package-ID", "Package-Version", "License-Type", "License-Url" },
+                    var result = license.ToStringTable(new[] { "#", "Package", "Version", "License" },
+                                                            a => "#",
                                                             a => $"[{a.Value.Metadata.Id ?? "---"}]({a.Value.Metadata.ProjectUrl ?? string.Empty})",
                                                             a => a.Value.Metadata.Version ?? "---",
-                                                            a => (a.Value.Metadata.License != null ? a.Value.Metadata.License.Text : "---"),
-                                                            a => a.Value.Metadata.LicenseUrl ?? "---"));
+                                                            a => $"[{a.Value.Metadata.License?.Text ?? "---"}]({a.Value.Metadata.LicenseUrl ?? string.Empty})");
+                    File.WriteAllText(Path.Combine(Path.GetDirectoryName(project), Path.GetFileNameWithoutExtension(project) + "_Notices.md"), result);
+                    Console.WriteLine(result);
+
                 }
             }
         }
@@ -152,11 +155,12 @@ namespace NugetUtility
                 Console.WriteLine(Environment.NewLine + "References:");
                 foreach (var license in licenses)
                 {
-                    Console.WriteLine(license.ToStringTable(new[] {"Package-ID", "Package-Version", "License-Type", "License-Url" },
+                    var result = license.ToStringTable(new[] { "#", "Package", "Version", "License" },
+                                                            a => "#",
                                                             a => $"[{a.Value.Metadata.Id ?? "---"}]({a.Value.Metadata.ProjectUrl ?? string.Empty})",
                                                             a => a.Value.Metadata.Version ?? "---",
-                                                            a => (a.Value.Metadata.License != null ? a.Value.Metadata.License.Text : "---"),
-                                                            a => a.Value.Metadata.LicenseUrl ?? "---"));
+                                                            a => $"[{a.Value.Metadata.License?.Text ?? "---"}]({a.Value.Metadata.LicenseUrl ?? string.Empty})");
+                    Console.WriteLine(result);
                 }
 
                 if (output)
