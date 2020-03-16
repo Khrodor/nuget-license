@@ -1,6 +1,6 @@
-﻿   /* 
+﻿   /*
     Licensed under the Apache License, Version 2.0
-    
+
     http://www.apache.org/licenses/LICENSE-2.0
     */
 using System;
@@ -93,8 +93,8 @@ using System.Xml;
 		[XmlElement(ElementName="metadata")]
 		public Metadata Metadata { get; set; }
 	}
-	
-	
+
+
 	// helper class to ignore namespaces when de-serializing
 	public class NamespaceIgnorantXmlTextReader : XmlTextReader
 	{
@@ -111,7 +111,7 @@ using System.Xml;
 		public XTWFND (System.IO.TextWriter w) : base(w) { Formatting= System.Xml.Formatting.Indented;}
 		public override void WriteStartDocument () { }
 	}
-	
-	
+
+
 
 }

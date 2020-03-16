@@ -48,7 +48,14 @@ namespace NugetUtility
         public static string ToStringTable(this string[,] arrValues)
         {
             int[] maxColumnsWidth = GetMaxColumnsWidth(arrValues);
-            var headerSpliter = new string('-', maxColumnsWidth.Sum(i => i + 3) - 1);
+            var sbHeaderSpliter = new StringBuilder();
+            for (int colIndex = 0; colIndex < arrValues.GetLength(1); colIndex++)
+            {
+                var cell = string.Empty.PadRight(maxColumnsWidth[colIndex], '-');
+                sbHeaderSpliter.Append(" | ");
+                sbHeaderSpliter.Append(cell);
+            }
+            var headerSpliter = sbHeaderSpliter.ToString().TrimStart(' ');
 
             var sb = new StringBuilder();
             for (int rowIndex = 0; rowIndex < arrValues.GetLength(0); rowIndex++)
@@ -69,7 +76,7 @@ namespace NugetUtility
                 // Print splitter
                 if (rowIndex == 0)
                 {
-                    sb.AppendFormat(" |{0}| ", headerSpliter);
+                    sb.AppendFormat(" {0} | ", headerSpliter);
                     sb.AppendLine();
                 }
             }
@@ -89,7 +96,7 @@ namespace NugetUtility
 
                     if (newLength > oldLength)
                     {
-                        maxColumnsWidth[colIndex] = newLength;
+                        maxColumnsWidth[colIndex] = newLength + 1;
                     }
                 }
             }

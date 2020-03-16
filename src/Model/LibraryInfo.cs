@@ -6,7 +6,7 @@ namespace NugetUtility
         public string PackageVersion { get; set; }
         public string PackageUrl { get; set; }
         public string Description { get; set; }
-        public string LicenseUrl { get; set; }
         public string LicenseType { get; set; }
+        public string LicenseUrl { get; set; }
     }
 }
